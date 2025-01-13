@@ -7,9 +7,10 @@ import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.event.EventHandler;
+import net.md_5.bungee.protocol.packet.Handshake;
 
-import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -55,8 +56,9 @@ public final class BungeeViaProxy extends Plugin implements Listener {
         // To address this, any address containing ".viaproxy." is passed directly to the target server.
         if (host.contains(IDENTIFIER)) {
             PendingConnection con = event.getPlayer().getPendingConnection();
-            if (ReflectionUtil.isInitialHandler(con)) {
-                ReflectionUtil.setInitialHandlerHandshakeHost(con, host);
+            if (con instanceof InitialHandler) {
+                Handshake handshake = ((InitialHandler) con).getHandshake();
+                handshake.setHost(host);
             }
         }
     }
@@ -66,8 +68,9 @@ public final class BungeeViaProxy extends Plugin implements Listener {
         // Reverse the changes made in onServerConnect after the connection is established
         PendingConnection con = event.getPlayer().getPendingConnection();
         String host = con.getVirtualHost().getHostString();
-        if (host.contains(IDENTIFIER) && ReflectionUtil.isInitialHandler(con)) {
-            ReflectionUtil.setInitialHandlerHandshakeHost(con, host);
+        if (host.contains(IDENTIFIER) && con instanceof InitialHandler) {
+            Handshake handshake = ((InitialHandler) con).getHandshake();
+            handshake.setHost(host);
         }
     }
 
