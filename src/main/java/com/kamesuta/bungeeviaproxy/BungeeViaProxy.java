@@ -1,5 +1,6 @@
 package com.kamesuta.bungeeviaproxy;
 
+import net.md_5.bungee.BungeeServerInfo;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.PendingConnection;
@@ -28,19 +29,18 @@ public final class BungeeViaProxy extends Plugin implements Listener {
         // In Bungeecord, even if the hostnames are different, the equals method returns true if the resolved IP addresses are the same.
         // This results in the error "You are already connected to this server!".
         // To avoid this, we use unresolved InetSocketAddress objects so that different hostnames are treated as distinct servers.
-        ProxyServer.getInstance().getServers().values().forEach(serverInfo -> {
-            // Convert address to unresolved address
-            SocketAddress socketAddress = serverInfo.getSocketAddress();
-            if (socketAddress instanceof InetSocketAddress) {
-                InetSocketAddress inetSocketAddress = (InetSocketAddress) socketAddress;
-                // Only convert if the address is a ViaProxy address
-                if (inetSocketAddress.getHostString().contains(IDENTIFIER) && ReflectionUtil.isBungeeSeverInfo(serverInfo)) {
-                    ReflectionUtil.setBungeeServerInfoSocketAddress(
-                            serverInfo,
-                            InetSocketAddress.createUnresolved(inetSocketAddress.getHostString(), inetSocketAddress.getPort())
-                    );
-                }
-            }
+        ProxyServer.getInstance().getServers().replaceAll((name, serverInfo) -> {
+            // if the serverInfo is already a HostnameBungeeServerInfo, return it as is
+            if (serverInfo instanceof HostnameBungeeServerInfo) return serverInfo;
+            // if the serverInfo is not a BungeeServerInfo, return it as is
+            if (!(serverInfo instanceof BungeeServerInfo)) return serverInfo;
+            // wrap the BungeeServerInfo to HostnameBungeeServerInfo
+            return new HostnameBungeeServerInfo(
+                    serverInfo.getName(),
+                    serverInfo.getSocketAddress(),
+                    serverInfo.getMotd(),
+                    serverInfo.isRestricted()
+            );
         });
     }
 
