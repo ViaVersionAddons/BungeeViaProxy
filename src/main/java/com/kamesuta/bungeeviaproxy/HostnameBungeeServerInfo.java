@@ -9,8 +9,30 @@ import java.util.Objects;
 
 public class HostnameBungeeServerInfo extends BungeeServerInfo {
 
-    public HostnameBungeeServerInfo(String name, SocketAddress socketAddress, String motd, boolean restricted) {
-        super(name, socketAddress, motd, restricted);
+    public HostnameBungeeServerInfo(String name, SocketAddress address, String motd, boolean restricted) {
+        super(name, address, motd, restricted);
+    }
+
+    public static ServerInfo wrap(ServerInfo serverInfo) {
+        if (serverInfo instanceof HostnameBungeeServerInfo) return serverInfo;
+
+        return new HostnameBungeeServerInfo(
+                serverInfo.getName(),
+                serverInfo.getSocketAddress(),
+                serverInfo.getMotd(),
+                serverInfo.isRestricted()
+        );
+    }
+
+    public static ServerInfo unwrap(ServerInfo serverInfo) {
+        if (!(serverInfo instanceof HostnameBungeeServerInfo)) return serverInfo;
+
+        return new BungeeServerInfo(
+                serverInfo.getName(),
+                serverInfo.getSocketAddress(),
+                serverInfo.getMotd(),
+                serverInfo.isRestricted()
+        );
     }
 
     @Override

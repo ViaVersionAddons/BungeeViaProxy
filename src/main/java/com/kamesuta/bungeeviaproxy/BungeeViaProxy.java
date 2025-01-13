@@ -1,6 +1,5 @@
 package com.kamesuta.bungeeviaproxy;
 
-import net.md_5.bungee.BungeeServerInfo;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.PendingConnection;
@@ -30,18 +29,20 @@ public final class BungeeViaProxy extends Plugin implements Listener {
         // This results in the error "You are already connected to this server!".
         // To avoid this, we use unresolved InetSocketAddress objects so that different hostnames are treated as distinct servers.
         ProxyServer.getInstance().getServers().replaceAll((name, serverInfo) -> {
-            // if the serverInfo is already a HostnameBungeeServerInfo, return it as is
-            if (serverInfo instanceof HostnameBungeeServerInfo) return serverInfo;
-            // if the serverInfo is not a BungeeServerInfo, return it as is
-            if (!(serverInfo instanceof BungeeServerInfo)) return serverInfo;
+            // only address containing ".viaproxy."
+            if (!serverInfo.getSocketAddress().toString().contains(IDENTIFIER)) return serverInfo;
             // wrap the BungeeServerInfo to HostnameBungeeServerInfo
-            return new HostnameBungeeServerInfo(
-                    serverInfo.getName(),
-                    serverInfo.getSocketAddress(),
-                    serverInfo.getMotd(),
-                    serverInfo.isRestricted()
-            );
+            return HostnameBungeeServerInfo.wrap(serverInfo);
         });
+    }
+
+    @Override
+    public void onDisable() {
+        // Plugin shutdown logic
+        ProxyServer.getInstance().getPluginManager().unregisterListener(this);
+
+        // Restore the original BungeeServerInfo
+        ProxyServer.getInstance().getServers().replaceAll((name, serverInfo) -> HostnameBungeeServerInfo.unwrap(serverInfo));
     }
 
     @EventHandler
