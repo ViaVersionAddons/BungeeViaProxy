@@ -1,3 +1,5 @@
 name: BungeeViaProxy
 version: '1.0-SNAPSHOT'
 main: com.kamesuta.bungeeviaproxy.BungeeViaProxy
+author: Kamesuta
+description: A BungeeCord plugin to fix compatibility issues with ViaProxy, enabling seamless multi-version support for backend servers with reduced overhead.

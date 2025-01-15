@@ -32,6 +32,14 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
         <version>3.5.3</version>
+        <configuration>
+          <relocations>
+            <relocation>
+              <pattern>org.bstats</pattern>
+              <shadedPattern>com.kamesuta.bungeeviaproxy.lib.bstats</shadedPattern>
+            </relocation>
+          </relocations>
+        </configuration>
         <executions>
           <execution>
             <phase>package</phase>
@@ -69,6 +77,11 @@
       <artifactId>bungeecord-proxy</artifactId>
       <version>1.20-R0.3-SNAPSHOT</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.bstats</groupId>
+      <artifactId>bstats-bungeecord</artifactId>
+      <version>3.0.2</version>
     </dependency>
   </dependencies>
 </project>

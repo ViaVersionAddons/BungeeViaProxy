@@ -12,7 +12,7 @@
   BungeeViaProxy resolves these issues by ensuring correct hostname forwarding and avoiding duplicate server errors, allowing seamless integration of ViaProxy and BungeeCord.
 
 - **Who should use this?**  
-  Server administrators running networks with BungeeCord and multiple backend servers that need version translation via ViaProxy, but want to avoid the complexity of managing [ViaVersion](https://github.com/ViaVersion/ViaVersion) on each backend server.
+  Minecraft server administrators running networks with BungeeCord and multiple backend servers that need support for Minecraft versions including 1.20.2 and later, but want to avoid the complexity of managing [ViaVersion](https://github.com/ViaVersion/ViaVersion) on each backend server.
 
 ![Network Diagram](./assets/diagram.png)
 
@@ -166,6 +166,14 @@ settings:
 Note:
 - No ViaVersion plugin is required on the backend servers. (Because version translation is handled by ViaProxy)
 - Do not use [ViaProxyAuthHook](https://github.com/ViaVersionAddons/ViaProxyAuthHook) as ViaProxy is placed between BungeeCord and the backend servers.
+
+## bStats
+
+BungeePteroPower collects anonymous statistical data using [bStats](https://bstats.org/plugin/bungeecord/BungeeViaProxy/24459).  
+You can find the statistics data [here](https://bstats.org/plugin/bungeecord/BungeeViaProxy/24459).
+
+bStats is used to understand the usage of the plugin and help improve it.  
+To disable the collection of statistical data, please set `enabled` to `false` in `plugins/bStats/config.yml`
 
 ## License
 

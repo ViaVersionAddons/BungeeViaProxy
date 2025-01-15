@@ -10,6 +10,8 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.protocol.packet.Handshake;
+import org.bstats.bungeecord.Metrics;
+import org.bstats.charts.SimplePie;
 
 import java.net.SocketAddress;
 import java.util.logging.LogManager;
@@ -34,6 +36,13 @@ public final class BungeeViaProxy extends Plugin implements Listener {
             // wrap the BungeeServerInfo to HostnameBungeeServerInfo
             return HostnameBungeeServerInfo.wrap(serverInfo);
         });
+
+        // Enable bStats
+        Metrics metrics = new Metrics(this, 24459);
+        // Get server count containing ".viaproxy."
+        metrics.addCustomChart(new SimplePie("viaproxy_servers", () -> String.valueOf(
+                ProxyServer.getInstance().getServers().values().stream().filter(serverInfo -> serverInfo.getSocketAddress().toString().contains(IDENTIFIER)).count()
+        )));
     }
 
     @Override
