@@ -1,22 +1,39 @@
 # BungeeViaProxy
 
-## Overview
+## TL;DR
 
-**BungeeViaProxy** is a BungeeCord plugin designed to address compatibility issues when using [ViaProxy](https://github.com/ViaVersion/ViaProxy) with [BungeeCord](https://github.com/SpigotMC/BungeeCord).  
-This plugin is especially useful for networks with multiple backend servers running different Minecraft versions, where you want to minimize the overhead of maintaining ViaVersion plugins on each backend server.
+**BungeeViaProxy** is a [BungeeCord](https://github.com/SpigotMC/BungeeCord) plugin that fixes compatibility issues with [ViaProxy](https://github.com/ViaVersion/ViaProxy), enabling you to manage multiple backend servers running different Minecraft versions using a single ViaProxy instance.  
 
-ViaBungee support was discontinued as of Minecraft 1.20.2, making it necessary to migrate to ViaProxy for compatibility with newer versions of the game.  
-This guide is valuable for those who wish to continue using BungeeCord with the latest Minecraft versions while avoiding the burden of individually updating ViaVersion on each backend server.  
+- **Why?**  
+  [ViaBungee](https://github.com/ViaVersion/ViaBungee) was discontinued in Minecraft 1.20.2. To continue using BungeeCord with the latest Minecraft versions, you need ViaProxy.  
+  However, ViaProxy introduces challenges when combined with BungeeCord, such as improper hostname forwarding and duplicate server errors.  
 
-By leveraging ViaProxy with wildcard-domain-handling, a single ViaProxy instance can support multiple backend servers, simplifying updates and reducing resource usage.
+- **How does it help?**  
+  BungeeViaProxy resolves these issues by ensuring correct hostname forwarding and avoiding duplicate server errors, allowing seamless integration of ViaProxy and BungeeCord.
+
+- **Who should use this?**  
+  Server administrators running networks with BungeeCord and multiple backend servers that need version translation via ViaProxy, but want to avoid the complexity of managing [ViaVersion](https://github.com/ViaVersion/ViaVersion) on each backend server.
+
+![Network Diagram](./assets/diagram.png)
 
 ## Table of Contents
+- [Overview](#overview)
 - [Use Case](#use-case)
 - [How It Works](#how-it-works)
 - [Features](#features)
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Example Configuration](#example-configuration)
+
+## Overview
+
+**BungeeViaProxy** is a BungeeCord plugin designed to address compatibility issues when using [ViaProxy](https://github.com/ViaVersion/ViaProxy) with [BungeeCord](https://github.com/SpigotMC/BungeeCord).  
+This plugin is especially useful for networks with multiple backend servers running different Minecraft versions, where you want to minimize the overhead of maintaining ViaVersion plugins on each backend server.
+
+[ViaBungee](https://github.com/ViaVersion/ViaBungee) support was discontinued as of Minecraft 1.20.2, making it necessary to migrate to ViaProxy for compatibility with newer versions of the game.  
+This guide is valuable for those who wish to continue using BungeeCord with the latest Minecraft versions while avoiding the burden of individually updating [ViaVersion](https://github.com/ViaVersion/ViaVersion) on each backend server.  
+
+By leveraging ViaProxy with wildcard-domain-handling, a single ViaProxy instance can support multiple backend servers, simplifying updates and reducing resource usage.
 
 ## Use Case
 
@@ -42,7 +59,7 @@ To address this, ViaProxy supports the `wildcard-domain-handling` feature, allow
 This is achieved by using a specific address format for each backend server:
 
 ```
-address.<backend-ip>.port.<backend-port>.version.<backend-version>.viaproxy.<viaproxy-ip>.nip.io:<viaproxy-port>
+address.<backend-ip>.port.<backend-port>.version.<backend-version>.f2.viaproxy.<viaproxy-ip>.nip.io:<viaproxy-port>
 ```
 
 These addresses can then be listed in the `config.yml` of BungeeCord, enabling seamless connection management through a single ViaProxy instance.  
@@ -64,11 +81,9 @@ However, this setup introduces certain challenges, which BungeeViaProxy resolves
 
 ## Configuration
 
-No additional configuration is required. BungeeViaProxy automatically handles `.viaproxy.` addresses and ensures proper server routing.
+No additional configuration is required. BungeeViaProxy automatically handles `.f2.viaproxy.` addresses and ensures proper server routing.
 
 ## Example Configuration
-
-![Network Diagram](./assets/diagram.png)
 
 Here is an example of how to configure BungeeCord to work with ViaProxy using wildcard-domain-handling
 
@@ -86,20 +101,20 @@ BungeeCord `config.yml` (only relevant options are shown):
 online_mode: true
 servers:
   server1:
-    # ViaProxy address format: address.<backend-ip>.port.<backend-port>.version.<backend-version>.viaproxy.<viaproxy-ip>.nip.io:<viaproxy-port>
-    address: address.127.0.0.1.port.3001.version.1.20.4.viaproxy.127.0.0.1.nip.io:25566
+    # ViaProxy address format: address.<backend-ip>.port.<backend-port>.version.<backend-version>.f2.viaproxy.<viaproxy-ip>.nip.io:<viaproxy-port>
+    address: address.127.0.0.1.port.3001.version.1.20.4.f2.viaproxy.127.0.0.1.nip.io:25566
     motd: '&1Example Server 1'
     restricted: false
   server2:
     # In this example,
     # Backend server IP: 127.0.0.1:25566
     # ViaProxy IP: 127.0.0.1:3002
-    address: address.127.0.0.1.port.3002.version.1.16.5.viaproxy.127.0.0.1.nip.io:25566
+    address: address.127.0.0.1.port.3002.version.1.16.5.f2.viaproxy.127.0.0.1.nip.io:25566
     motd: '&1Example Server 1'
     restricted: false
   server3:
     # Version can be omitted if not needed (version is automatically detected by ViaProxy)
-    address: address.127.0.0.1.port.3003.viaproxy.127.0.0.1.nip.io:25566
+    address: address.127.0.0.1.port.3003.f2.viaproxy.127.0.0.1.nip.io:25566
     motd: '&1Example Server 3 (".version.1.20.4" can be omitted)'
     restricted: false
 listeners:
@@ -131,7 +146,7 @@ auth-method: NONE
 
 # Allows clients to specify a target server and version using wildcard domains.
 # none: No wildcard domain handling.
-# public: Public wildcard domain handling. Intended for usage by external clients. (Example: address.<address>.port.<port>.version.<version>.viaproxy.127.0.0.1.nip.io (version is optional))
+# public: Public wildcard domain handling. Intended for usage by external clients. (Example: address.<address>.port.<port>.version.<version>.f2.viaproxy.127.0.0.1.nip.io (version is optional))
 # internal: Internal wildcard domain handling. Intended for local usage by custom clients. (Example: original-handshake-address\7address:port\7version\7classic-mppass)
 wildcard-domain-handling: PUBLIC
 ```
